@@ -105,3 +105,30 @@ Renders/
 *.zip
 *.rar
 *.7z
+
+#FMOD 
+
+# =========================
+# FMOD
+# =========================
+
+# FMOD temporary/cache files
+*.cache
+*.tmp
+*.backup
+*.user
+
+# FMOD generated temp folders
+[Ff][Mm][Oo][Dd]/.cache/
+[Ff][Mm][Oo][Dd]/Cache/
+[Ff][Mm][Oo][Dd]/Temp/
+
+# Optional: ignore old/backup FMOD files
+*.fspro.backup
+
+# Do NOT ignore these:
+# *.fspro
+# FMOD/Metadata/
+# FMOD/Assets/
+# FMOD/Build/
+# FMOD/Builds/
