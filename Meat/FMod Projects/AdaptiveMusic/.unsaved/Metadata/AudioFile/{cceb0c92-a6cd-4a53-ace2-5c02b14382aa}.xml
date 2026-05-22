@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{cceb0c92-a6cd-4a53-ace2-5c02b14382aa}">
+		<property name="assetPath">
+			<value>ArabicDesert_BKT.wav</value>
+		</property>
+		<property name="isStreaming">
+			<value>true</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>89.142875000000004</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{9fc3ea32-7482-490d-80b4-51fedf220114}</destination>
+		</relationship>
+	</object>
+</objects>
