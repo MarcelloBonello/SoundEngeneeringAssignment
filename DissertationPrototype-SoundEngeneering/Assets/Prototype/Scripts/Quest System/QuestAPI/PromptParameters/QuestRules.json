@@ -1,0 +1,696 @@
+{
+  "version": 5,
+  "limits": {
+    "max_steps": 10,
+    "max_required_kills": 12,
+    "max_required_seconds_in_area": 20,
+    "max_total_objectives_per_quest": 10
+  },
+  "llm_hard_instructions": [
+    "Return one quest only.",
+    "Return strict JSON only.",
+    "Do not use markdown.",
+    "Do not add comments.",
+    "Do not add extra keys.",
+    "The generated quest MUST include quest_type.",
+    "quest_type MUST be a string.",
+    "quest_type MUST NOT be null.",
+    "quest_type MUST be exactly one of: Exploration, Combat, Mixed.",
+    "Use the player_profile to adapt the quest to the player's observed behaviour.",
+    "If enemiesAvoided is higher than enemiesKilled, treat this as a sign that the player avoids combat.",
+    "If enemiesKilled, damageDealt, and weapon hits are high, treat this as a sign that the player accepts combat.",
+    "If areasVisited count, timeInArea variety, and distanceTravelled are low, treat this as a sign that the player does not strongly explore.",
+    "If both combat engagement and exploration engagement are low, generate a simple Mixed quest to encourage both playstyles.",
+    "For enemy objectives, the generated quest MUST use ENEMY_RANDOM only.",
+    "Never output ENEMY_MELLE or ENEMY_RANGED in generated quest targets.",
+    "For KillEnemyWithWeapon, the target MUST use the format ENEMY_RANDOM:WEAPON_TYPE.",
+    "Every generated step progress MUST start at 0."
+  ],
+  "allowed_step_types": [
+    "EnterArea",
+    "ReturnToArea",
+    "TimeInArea",
+    "KillEnemy",
+    "KillWithWeapon",
+    "KillEnemyWithWeapon",
+    "CollectItem",
+    "Interact"
+  ],
+  "quest_type_allowed_values": [
+    "Exploration",
+    "Combat",
+    "Mixed"
+  ],
+  "areas": [
+    {
+      "id": "DESERT",
+      "display_name": "Desert",
+      "category": "REGION"
+    },
+    {
+      "id": "DESERT_VILLAGE",
+      "display_name": "Desert Village",
+      "category": "SUBAREA",
+      "parent": "DESERT"
+    },
+    {
+      "id": "DESERT_NORTH_CLIFFS",
+      "display_name": "North Cliffs",
+      "category": "SUBAREA",
+      "parent": "DESERT"
+    },
+    {
+      "id": "DESERT_SOUTH_CLIFFS",
+      "display_name": "South Cliffs",
+      "category": "SUBAREA",
+      "parent": "DESERT"
+    },
+    {
+      "id": "FOREST",
+      "display_name": "Forest",
+      "category": "REGION"
+    },
+    {
+      "id": "FOREST_VILLAGE",
+      "display_name": "Forest Village",
+      "category": "SUBAREA",
+      "parent": "FOREST"
+    },
+    {
+      "id": "FOREST_FARMS",
+      "display_name": "Forest Farms",
+      "category": "SUBAREA",
+      "parent": "FOREST"
+    },
+    {
+      "id": "FOREST_SOUTH_FOREST",
+      "display_name": "Southern Forest",
+      "category": "SUBAREA",
+      "parent": "FOREST"
+    },
+    {
+      "id": "FOREST_NORTH_FOREST",
+      "display_name": "Northern Forest",
+      "category": "SUBAREA",
+      "parent": "FOREST"
+    },
+    {
+      "id": "CASTLE",
+      "display_name": "Castle",
+      "category": "REGION"
+    }
+  ],
+  "enemies": [
+    {
+      "id": "ENEMY_RANDOM",
+      "display_name": "Random Enemy",
+      "description": "Use this ID for all LLM-generated enemy quest targets. Unity resolves it at runtime to either ENEMY_MELLE or ENEMY_RANGED.",
+      "biomes": [
+        "FOREST",
+        "DESERT"
+      ],
+      "runtime_resolves_to": [
+        "ENEMY_MELLE",
+        "ENEMY_RANGED"
+      ],
+      "llm_use_for_quest_targets": true
+    },
+    {
+      "id": "ENEMY_MELLE",
+      "display_name": "Enemy_Melee",
+      "description": "Runtime enemy ID only. Do not use this directly in LLM-generated quest step targets.",
+      "biomes": [
+        "FOREST",
+        "DESERT"
+      ],
+      "llm_use_for_quest_targets": false
+    },
+    {
+      "id": "ENEMY_RANGED",
+      "display_name": "Enemy_Ranged",
+      "description": "Runtime enemy ID only. Do not use this directly in LLM-generated quest step targets.",
+      "biomes": [
+        "FOREST",
+        "DESERT"
+      ],
+      "llm_use_for_quest_targets": false
+    }
+  ],
+  "items": [
+    {
+      "id": "SUPPLY_CRATE",
+      "display_name": "Supply Crate"
+    }
+  ],
+  "item_spawn_locations": [
+    {
+      "id": "Forest_Farm_Spawn",
+      "area": "FOREST"
+    },
+    {
+      "id": "North_Forest_Spawn",
+      "area": "FOREST"
+    },
+    {
+      "id": "South_Forest_Spawn",
+      "area": "FOREST"
+    },
+    {
+      "id": "North_Clif_Spawn",
+      "area": "DESERT"
+    },
+    {
+      "id": "South_Clif_Spawn",
+      "area": "DESERT"
+    }
+  ],
+  "interactables": [
+    {
+      "id": "FOREST_NOTICE_BOARD",
+      "display_name": "Forest Notice Board",
+      "area": "FOREST"
+    },
+    {
+      "id": "DESERT_NOTICE_BOARD",
+      "display_name": "Desert Notice Board",
+      "area": "DESERT"
+    }
+  ],
+  "weapon_types": [
+    "SWORD",
+    "BLUNT",
+    "RANGED"
+  ],
+  "difficulty_presets": {
+    "easy": {
+      "kill_multiplier": 0.7,
+      "time_multiplier": 0.8,
+      "reward_multiplier": 0.9
+    },
+    "normal": {
+      "kill_multiplier": 1.0,
+      "time_multiplier": 1.0,
+      "reward_multiplier": 1.0
+    },
+    "hard": {
+      "kill_multiplier": 1.3,
+      "time_multiplier": 1.2,
+      "reward_multiplier": 1.2
+    }
+  },
+  "output_contract": {
+    "format": "STRICT_JSON",
+    "no_markdown": true,
+    "no_extra_keys": true,
+    "top_level_required_fields": [
+      "quest_id",
+      "title",
+      "description",
+      "quest_type",
+      "tags",
+      "reward",
+      "steps"
+    ],
+    "top_level_forbidden_fields": [
+      "target_id",
+      "quantity",
+      "objective",
+      "objectives",
+      "questType",
+      "type"
+    ],
+    "quest_type_required": true,
+    "quest_type_must_not_be_null": true,
+    "quest_type_must_be_string": true,
+    "quest_type_allowed_values": [
+      "Exploration",
+      "Combat",
+      "Mixed"
+    ],
+    "reward_required_fields": [
+      "xp",
+      "gold"
+    ],
+    "step_required_fields": [
+      "step_id",
+      "type",
+      "target",
+      "required",
+      "progress",
+      "text"
+    ],
+    "step_forbidden_fields": [
+      "target_id",
+      "quantity",
+      "description"
+    ],
+    "initial_step_progress": 0
+  },
+  "quest_type_rules": {
+    "field_name": "quest_type",
+    "required": true,
+    "must_not_be_null": true,
+    "must_be_string": true,
+    "allowed_values": [
+      "Exploration",
+      "Combat",
+      "Mixed"
+    ],
+    "hard_rule": "Every generated quest MUST include quest_type as a non-null string. Never output quest_type as null. Never omit quest_type.",
+    "selection_rules": {
+      "Exploration": "Use when the quest mainly involves EnterArea, ReturnToArea, TimeInArea, CollectItem, or Interact steps and has no combat objective.",
+      "Combat": "Use when the quest mainly involves KillEnemy, KillWithWeapon, or KillEnemyWithWeapon steps and has little or no exploration objective.",
+      "Mixed": "Use when the quest contains both exploration-style steps and combat-style steps."
+    },
+    "step_categories": {
+      "exploration_steps": [
+        "EnterArea",
+        "ReturnToArea",
+        "TimeInArea",
+        "CollectItem",
+        "Interact"
+      ],
+      "combat_steps": [
+        "KillEnemy",
+        "KillWithWeapon",
+        "KillEnemyWithWeapon"
+      ]
+    }
+  },
+  "player_profile_usage_rules": {
+    "purpose": "Use the player_profile to adapt quest_type, objectives, difficulty, area choice, and weapon requirements. The goal is to generate quests that reflect the player's observed behaviour while still gently encouraging variety.",
+    "important_profile_fields": {
+      "exploration": [
+        "areasVisited",
+        "timeInArea",
+        "distanceTravelled",
+        "explorationScore01"
+      ],
+      "combat": [
+        "enemiesAggroed",
+        "enemiesKilled",
+        "enemiesAvoided",
+        "damageDealt",
+        "damageTaken",
+        "meleeHits",
+        "rangedHits",
+        "swordHits",
+        "bluntHits",
+        "combatScore01"
+      ],
+      "quest_history": [
+        "questsCompleted",
+        "questsFailed",
+        "completedByTemplateId",
+        "completedByQuestType",
+        "completedByQuestScore",
+        "achieverScore01"
+      ]
+    },
+    "combat_interpretation_rules": {
+      "avoidance_signal": {
+        "condition": "If enemiesAvoided is greater than enemiesKilled, especially when enemiesKilled is 0 or very low.",
+        "meaning": "The player is avoiding combat or is not interested in fighting enemies.",
+        "quest_guidance": "Prefer Exploration quests or light Mixed quests. Avoid heavy KillEnemy requirements. If combat is included, use only 1 simple combat objective with a low required count."
+      },
+      "combat_preference_signal": {
+        "condition": "If enemiesKilled is greater than enemiesAvoided and damageDealt or weapon hits are high.",
+        "meaning": "The player is comfortable with combat and may enjoy combat-focused objectives.",
+        "quest_guidance": "Prefer Combat or Mixed quests. Combat objectives may have higher required counts, but must still respect max_required_kills."
+      },
+      "combat_struggle_signal": {
+        "condition": "If damageTaken is high while enemiesKilled and damageDealt are low.",
+        "meaning": "The player may be struggling with combat rather than enjoying it.",
+        "quest_guidance": "Reduce combat difficulty. Prefer Exploration or light Mixed quests with low combat pressure."
+      },
+      "no_combat_data_signal": {
+        "condition": "If enemiesKilled, enemiesAvoided, damageDealt, meleeHits, and rangedHits are all low.",
+        "meaning": "There is not enough evidence that the player prefers or avoids combat.",
+        "quest_guidance": "Use a gentle Mixed quest that includes both exploration and a small combat, collection, or interaction objective."
+      }
+    },
+    "exploration_interpretation_rules": {
+      "low_exploration_variety_signal": {
+        "condition": "If areasVisited has very few unique areas, explorationScore01 is low, and distanceTravelled is low.",
+        "meaning": "The player is not strongly exploring the world or may prefer staying near familiar places.",
+        "quest_guidance": "Avoid quests that force the player through many different regions. Prefer nearby areas, familiar areas, or short travel routes."
+      },
+      "high_exploration_signal": {
+        "condition": "If areasVisited contains many unique areas, timeInArea has meaningful values across several areas, or explorationScore01 is high.",
+        "meaning": "The player seems interested in travelling and exploring.",
+        "quest_guidance": "Prefer Exploration or Mixed quests with EnterArea, TimeInArea, CollectItem, Interact, or ReturnToArea objectives."
+      },
+      "no_exploration_data_signal": {
+        "condition": "If areasVisited, timeInArea, and distanceTravelled are all low.",
+        "meaning": "There is not enough evidence that the player prefers or avoids exploration.",
+        "quest_guidance": "Use a gentle Mixed quest with one simple travel objective and one simple combat, collection, or interaction objective."
+      }
+    },
+    "quest_type_selection_from_profile": {
+      "prefer_exploration": [
+        "enemiesAvoided > enemiesKilled",
+        "combatScore01 is low",
+        "damageDealt is low",
+        "player has visited some areas or spent time in areas"
+      ],
+      "prefer_combat": [
+        "enemiesKilled > enemiesAvoided",
+        "damageDealt is high",
+        "meleeHits or rangedHits are high",
+        "combatScore01 is high"
+      ],
+      "prefer_mixed": [
+        "both combat and exploration signals are present",
+        "there is not enough clear evidence for either combat or exploration preference",
+        "both enemiesKilled and exploration variety are low",
+        "the system needs to encourage both playstyles and collect more useful profile data"
+      ]
+    },
+    "balanced_encouragement_rules": {
+      "rule_1": "Do not only mirror the player. Adapt to their behaviour, but sometimes gently encourage underused playstyles.",
+      "rule_2": "If the player avoids combat, do not force a hard combat quest. Use Exploration or light Mixed.",
+      "rule_3": "If the player does not explore much, do not force long travel across many regions. Use nearby or familiar locations.",
+      "rule_4": "If both combat and exploration are low, generate a simple Mixed quest with one exploration objective and one small combat, collection, or interaction objective.",
+      "rule_5": "When in doubt, choose Mixed, but keep the quest short and easy."
+    },
+    "difficulty_adaptation_rules": {
+      "low_combat_player": {
+        "condition": "enemiesKilled is low, damageDealt is low, or enemiesAvoided is high.",
+        "max_kill_required_guidance": 1,
+        "recommended_quest_types": [
+          "Exploration",
+          "Mixed"
+        ]
+      },
+      "medium_combat_player": {
+        "condition": "enemiesKilled and damageDealt are moderate, or the player has completed some combat objectives.",
+        "max_kill_required_guidance": 2,
+        "recommended_quest_types": [
+          "Mixed",
+          "Combat"
+        ]
+      },
+      "high_combat_player": {
+        "condition": "enemiesKilled is high, damageDealt is high, weapon hits are high, and enemiesAvoided is low.",
+        "max_kill_required_guidance": 3,
+        "recommended_quest_types": [
+          "Combat",
+          "Mixed"
+        ]
+      },
+      "low_exploration_player": {
+        "condition": "areasVisited count is low and distanceTravelled is low.",
+        "area_guidance": "Use one nearby or familiar area. Avoid sending the player across many areas."
+      },
+      "high_exploration_player": {
+        "condition": "areasVisited count is high or explorationScore01 is high.",
+        "area_guidance": "Use multiple area-based objectives and encourage travel between known regions."
+      }
+    },
+    "weapon_preference_rules": {
+      "sword_preference": {
+        "condition": "swordHits is greater than bluntHits and rangedHits.",
+        "guidance": "If using KillEnemyWithWeapon, prefer ENEMY_RANDOM:SWORD."
+      },
+      "blunt_preference": {
+        "condition": "bluntHits is greater than swordHits and rangedHits.",
+        "guidance": "If using KillEnemyWithWeapon, prefer ENEMY_RANDOM:BLUNT."
+      },
+      "ranged_preference": {
+        "condition": "rangedHits is greater than meleeHits.",
+        "guidance": "If using KillEnemyWithWeapon, prefer ENEMY_RANDOM:RANGED."
+      },
+      "no_weapon_preference": {
+        "condition": "weapon hit counts are all low or tied.",
+        "guidance": "Avoid strict weapon requirements unless the quest needs to collect weapon preference data."
+      }
+    },
+    "area_preference_rules": {
+      "prefer_familiar_areas": "When the player has low exploration variety, use areas already present in areasVisited or nearby areas from the same region.",
+      "prefer_new_areas": "When the player has high explorationScore01, introduce another valid area from the allowed area list.",
+      "avoid_invalid_areas": "Only use area IDs listed in this QuestRules file."
+    },
+    "examples": [
+      {
+        "profile_pattern": "enemiesKilled = 0, enemiesAvoided is high, damageDealt is low",
+        "interpretation": "Player avoids combat.",
+        "recommended_quest_type": "Exploration",
+        "recommended_steps": [
+          "EnterArea",
+          "TimeInArea",
+          "ReturnToArea",
+          "CollectItem"
+        ],
+        "avoid": [
+          "large KillEnemy requirements",
+          "hard combat objectives"
+        ]
+      },
+      {
+        "profile_pattern": "enemiesKilled is high, damageDealt is high, enemiesAvoided is low",
+        "interpretation": "Player accepts or enjoys combat.",
+        "recommended_quest_type": "Combat",
+        "recommended_steps": [
+          "KillEnemy",
+          "KillEnemyWithWeapon"
+        ],
+        "avoid": [
+          "pure walking quests with no challenge"
+        ]
+      },
+      {
+        "profile_pattern": "areasVisited is low, distanceTravelled is low, enemiesKilled is low, enemiesAvoided is low",
+        "interpretation": "Not enough evidence. Player has not shown strong combat or exploration behaviour.",
+        "recommended_quest_type": "Mixed",
+        "recommended_steps": [
+          "EnterArea",
+          "CollectItem",
+          "KillEnemy",
+          "ReturnToArea"
+        ],
+        "guidance": "Keep the quest short and simple to encourage both playstyles."
+      },
+      {
+        "profile_pattern": "areasVisited is high, explorationScore01 is high, combatScore01 is low",
+        "interpretation": "Player prefers exploration over combat.",
+        "recommended_quest_type": "Exploration",
+        "recommended_steps": [
+          "EnterArea",
+          "TimeInArea",
+          "CollectItem",
+          "Interact",
+          "ReturnToArea"
+        ],
+        "avoid": [
+          "combat-heavy quests"
+        ]
+      }
+    ]
+  },
+  "step_type_rules": {
+    "EnterArea": {
+      "target_format": "AREA_ID",
+      "allowed_targets": [
+        "DESERT",
+        "DESERT_VILLAGE",
+        "DESERT_NORTH_CLIFFS",
+        "DESERT_SOUTH_CLIFFS",
+        "FOREST",
+        "FOREST_VILLAGE",
+        "FOREST_FARMS",
+        "FOREST_SOUTH_FOREST",
+        "FOREST_NORTH_FOREST",
+        "CASTLE"
+      ]
+    },
+    "ReturnToArea": {
+      "target_format": "AREA_ID",
+      "allowed_targets": [
+        "DESERT",
+        "DESERT_VILLAGE",
+        "DESERT_NORTH_CLIFFS",
+        "DESERT_SOUTH_CLIFFS",
+        "FOREST",
+        "FOREST_VILLAGE",
+        "FOREST_FARMS",
+        "FOREST_SOUTH_FOREST",
+        "FOREST_NORTH_FOREST",
+        "CASTLE"
+      ]
+    },
+    "TimeInArea": {
+      "target_format": "AREA_ID",
+      "allowed_targets": [
+        "DESERT",
+        "DESERT_VILLAGE",
+        "DESERT_NORTH_CLIFFS",
+        "DESERT_SOUTH_CLIFFS",
+        "FOREST",
+        "FOREST_VILLAGE",
+        "FOREST_FARMS",
+        "FOREST_SOUTH_FOREST",
+        "FOREST_NORTH_FOREST",
+        "CASTLE"
+      ],
+      "required_min_seconds": 5,
+      "required_max_seconds": 20
+    },
+    "CollectItem": {
+      "target_format": "ITEM_ID",
+      "allowed_targets": [
+        "SUPPLY_CRATE"
+      ]
+    },
+    "Interact": {
+      "target_format": "INTERACTABLE_ID",
+      "allowed_targets": [
+        "FOREST_NOTICE_BOARD",
+        "DESERT_NOTICE_BOARD"
+      ]
+    },
+    "KillEnemy": {
+      "target_format": "ENEMY_RANDOM",
+      "target_must_be": "ENEMY_RANDOM",
+      "allowed_targets": [
+        "ENEMY_RANDOM"
+      ],
+      "forbidden_targets": [
+        "ENEMY_MELLE",
+        "ENEMY_MELEE",
+        "ENEMY_RANGED"
+      ],
+      "example_target": "ENEMY_RANDOM"
+    },
+    "KillWithWeapon": {
+      "target_format": "WEAPON_TYPE",
+      "allowed_targets": [
+        "SWORD",
+        "BLUNT",
+        "RANGED"
+      ],
+      "example_targets": [
+        "SWORD",
+        "BLUNT",
+        "RANGED"
+      ],
+      "note": "This step type does not choose a specific enemy. Unity will use its default enemy spawning behaviour."
+    },
+    "KillEnemyWithWeapon": {
+      "target_format": "ENEMY_RANDOM:WEAPON_TYPE",
+      "enemy_part_must_be": "ENEMY_RANDOM",
+      "weapon_part_allowed_values": [
+        "SWORD",
+        "BLUNT",
+        "RANGED"
+      ],
+      "allowed_targets": [
+        "ENEMY_RANDOM:SWORD",
+        "ENEMY_RANDOM:BLUNT",
+        "ENEMY_RANDOM:RANGED"
+      ],
+      "forbidden_targets": [
+        "ENEMY_MELLE:SWORD",
+        "ENEMY_MELLE:BLUNT",
+        "ENEMY_MELLE:RANGED",
+        "ENEMY_MELEE:SWORD",
+        "ENEMY_MELEE:BLUNT",
+        "ENEMY_MELEE:RANGED",
+        "ENEMY_RANGED:SWORD",
+        "ENEMY_RANGED:BLUNT",
+        "ENEMY_RANGED:RANGED"
+      ],
+      "do_not_use_enemy_parts": [
+        "ENEMY_MELLE",
+        "ENEMY_MELEE",
+        "ENEMY_RANGED"
+      ],
+      "example_targets": [
+        "ENEMY_RANDOM:SWORD",
+        "ENEMY_RANDOM:BLUNT",
+        "ENEMY_RANDOM:RANGED"
+      ]
+    }
+  },
+  "quest_generation_rules": {
+    "prefer_step_count_range": [
+      2,
+      4
+    ],
+    "quest_must_be_runtime_completable": true,
+    "use_only_known_ids_from_this_file": true,
+    "use_target_field_name_not_aliases": true,
+    "all_step_progress_values_must_be_zero": true,
+    "quest_type_must_match_steps": true,
+    "enemy_target_policy": "For all LLM-generated enemy objectives, use ENEMY_RANDOM instead of a specific enemy type. Do not generate ENEMY_MELLE, ENEMY_MELEE, or ENEMY_RANGED as step targets.",
+    "enemy_ids_allowed_as_step_targets": [
+      "ENEMY_RANDOM"
+    ],
+    "enemy_ids_forbidden_as_step_targets": [
+      "ENEMY_MELLE",
+      "ENEMY_MELEE",
+      "ENEMY_RANGED"
+    ],
+    "enemy_ids_reserved_for_runtime_resolution": [
+      "ENEMY_MELLE",
+      "ENEMY_RANGED"
+    ],
+    "kill_enemy_target_must_be": "ENEMY_RANDOM",
+    "kill_enemy_with_weapon_enemy_part_must_be": "ENEMY_RANDOM",
+    "kill_enemy_with_weapon_valid_targets_only": [
+      "ENEMY_RANDOM:SWORD",
+      "ENEMY_RANDOM:BLUNT",
+      "ENEMY_RANDOM:RANGED"
+    ],
+    "do_not_generate_completed_quests": true,
+    "do_not_set_any_step_progress_above_zero": true
+  },
+  "valid_output_example": {
+    "quest_id": "forest_patrol_001",
+    "title": "Forest Patrol",
+    "description": "Travel to the forest, investigate enemy activity, and return to report your findings.",
+    "quest_type": "Mixed",
+    "tags": [
+      "forest",
+      "exploration",
+      "combat"
+    ],
+    "reward": {
+      "xp": 150,
+      "gold": 75
+    },
+    "steps": [
+      {
+        "step_id": "reach_forest",
+        "type": "EnterArea",
+        "target": "FOREST",
+        "required": 1,
+        "progress": 0,
+        "text": "Enter the Forest."
+      },
+      {
+        "step_id": "observe_forest",
+        "type": "TimeInArea",
+        "target": "FOREST_NORTH_FOREST",
+        "required": 20,
+        "progress": 0,
+        "text": "Observe the Northern Forest for signs of danger."
+      },
+      {
+        "step_id": "defeat_enemy",
+        "type": "KillEnemyWithWeapon",
+        "target": "ENEMY_RANDOM:SWORD",
+        "required": 1,
+        "progress": 0,
+        "text": "Defeat 1 enemy using your sword."
+      },
+      {
+        "step_id": "return_village",
+        "type": "ReturnToArea",
+        "target": "FOREST_VILLAGE",
+        "required": 1,
+        "progress": 0,
+        "text": "Return to the Forest Village."
+      }
+    ]
+  }
+}

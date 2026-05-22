@@ -1,0 +1,100 @@
+{
+  "game": 
+  {
+    "title": "2D Action RPG Prototype",
+    "camera": "2D_TOP_DOWN",
+    "core_loop": "Explore biomes, fight enemies, complete short quests",
+    "tone": "Grounded fantasy conflict, simple objectives"
+  },
+
+  "factions": [
+    {
+      "id": "FOREST_FACTION",
+      "goal": "Secure routes and weaken castle defenses.",
+      "style": "Ambush and skirmish."
+    },
+    {
+      "id": "DESERT_FACTION",
+      "goal": "Secure routes and weaken castle defenses.",
+      "style": "Ambush and skirmish."
+    }
+  ],
+
+  "world": 
+  {
+    "description": "A small world with two main biomes (Forest and Desert) and a contested Castle area in between. Both biomes have bandit enemies, and the Castle is a strategic point of conflict. both biomes have areas indside ready to be used by quests. forest has 3 areas and desert has 2 areas.",
+    "regions": [
+      {
+        "id": "FOREST",
+        "summary": "Dense woodland with bandit activity."
+      },
+      {
+        "id": "DESERT",
+        "summary": "Open desert area with sand bandits activity."
+      },
+      {
+        "id": "CASTLE",
+        "summary": "samll island like area with a castle, inbetween two biomes."
+      }
+    ],
+    "areas":
+    [
+      {
+        "region": "DESERT",
+        "id": "DESERT_VILLAGE",
+        "summary": "The main settlment in the desrt, a small vilalge."
+      },
+      {
+        "region": "DESERT",
+        "id": "DESERT_NORTH_CLIFFS",
+        "summary": "big cliffs in the north of the desert, good for snipers and ambushes."
+      },
+      {
+        "region": "DESERT",
+        "id": "DESERT_SOUTH_CLIFFS",
+        "summary": "cliffs in the south of the desert, known for bandit hideouts and ambushes."
+      },
+      {
+        "region": "FOREST",
+        "id": "FOREST_VILLAGE",
+        "summary": "The main settlment in the forest, a small vilalge."
+      },
+      {
+        "region": "FOREST",
+        "id": "FOREST_FARMS",
+        "summary": "Farms in the north of the forest, a common target for bandit raids."
+      },
+      {
+        "region": "FOREST",
+        "id": "FOREST_SOUTH_FOREST",
+        "summary": "The southern part of the forest, with dense trees and bandit activity."
+      },
+      {
+        "region": "FOREST",
+        "id": "FOREST_NORTH_FOREST",
+        "summary": "The northern part of the forest, with dense trees and bandit activity."
+      }
+    ],
+    "conflict": "end goal of both factions, Forest and Desert forces, is to attempt to conquer the Castle."
+  },
+
+  "quest_guidelines": 
+  {
+    "structure": "Linear, 3-5 steps, no branching dialogue. invent over all narrative context and character details, but keep quest steps simple and clear.",
+    "clarity": "Each step must map to a known step type and known target IDs.",
+    "avoid": [
+      "Cutscenes",
+      "Complex puzzles",
+      "Ambiguous instructions",
+      "New areas/enemies/items not in rules.json"
+    ],
+    "player_adaptation": "Prefer exploration steps for explorers, combat steps for killers."
+  },
+
+  "output_contract": 
+  {
+    "format": "STRICT_JSON",
+    "no_markdown": true,
+    "no_extra_keys": true
+  }
+}

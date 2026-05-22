@@ -1,0 +1,48 @@
+{
+  "quest_id": "forest_supply_route_safety",
+  "title": "Securing the Northern Supply Line",
+  "description": "The Forest Faction requires the Northern Forest and Farms to be cleared of bandits to ensure supply lines to the Castle remain open.",
+  "tags": [
+    "forest",
+    "combat",
+    "supplies"
+  ],
+  "reward": {
+    "xp": 300,
+    "gold": 150
+  },
+  "steps": [
+    {
+      "step_id": "step_1",
+      "type": "Interact",
+      "target": "FOREST_NOTICE_BOARD",
+      "required": 1,
+      "progress": 0,
+      "text": "Check the Forest Notice Board for mission briefings."
+    },
+    {
+      "step_id": "step_2",
+      "type": "EnterArea",
+      "target": "FOREST_FARMS",
+      "required": 1,
+      "progress": 0,
+      "text": "Travel to the Forest Farms to assess the damage."
+    },
+    {
+      "step_id": "step_3",
+      "type": "KillEnemyWithWeapon",
+      "target": "ENEMY_RANGED:SWORD",
+      "required": 5,
+      "progress": 0,
+      "text": "Defeat raiding bandits in the area using your sword."
+    },
+    {
+      "step_id": "step_4",
+      "type": "CollectItem",
+      "target": "SUPPLY_CRATE",
+      "required": 1,
+      "progress": 0,
+      "text": "Recover a stolen Supply Crate for the village."
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "quest_id": "Q_TEST_FOREST_SCOUT_01",
+  "title": "Scout the Forest Edge",
+  "description": "Enter the Forest, stay alert for a short while, then return to the Castle to report.",
+  "tags": ["exploration", "test"],
+  "reward": { "xp": 25, "gold": 10 },
+  "steps": [
+    {
+      "step_id": "S1",
+      "type": "EnterArea",
+      "target": "FOREST",
+      "required": 1,
+      "progress": 0,
+      "text": "Enter the Forest."
+    },
+    {
+      "step_id": "S2",
+      "type": "TimeInArea",
+      "target": "FOREST",
+      "required": 10,
+      "progress": 0,
+      "text": "Stay in the Forest for 10 seconds."
+    },
+    {
+      "step_id": "S3",
+      "type": "ReturnToArea",
+      "target": "CASTLE",
+      "required": 1,
+      "progress": 0,
+      "text": "Return to the Castle."
+    }
+  ]
+}
