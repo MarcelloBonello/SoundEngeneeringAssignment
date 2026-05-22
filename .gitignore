@@ -104,3 +104,40 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+#Ableton LIVE
+
+# Ableton Live temporary/cache files
+*.asd
+*.alc
+*.tmp
+
+# Ableton backups
+Backup/
+Backups/
+
+# Crash/restore files
+Crash/
+Crash Reports/
+Undo/
+Ableton Folder Info/
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Large rendered exports, optional
+Exports/
+Rendered/
+Renders/
+
+# Video exports, optional
+*.mp4
+*.mov
+*.avi
+
+# Zip builds/submissions, optional
+*.zip
+*.rar
+*.7z
