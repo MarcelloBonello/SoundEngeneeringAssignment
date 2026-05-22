@@ -5,7 +5,7 @@
 			<value>SandFootSteps</value>
 		</property>
 		<property name="outputFormat">
-			<value>0</value>
+			<value>1</value>
 		</property>
 		<relationship name="folder">
 			<destination>{1b3c2c1e-4f44-4084-bf80-a6be09700ebe}</destination>
@@ -28,6 +28,9 @@
 		<relationship name="timeline">
 			<destination>{3215026f-2eaf-4cd4-b1f4-f277fc99cb51}</destination>
 		</relationship>
+		<relationship name="banks">
+			<destination>{ee128638-d78e-4d10-8be5-df09e275f94c}</destination>
+		</relationship>
 	</object>
 	<object class="EventMixer" id="{12940b54-bae4-4110-821e-0666bea1290a}">
 		<relationship name="masterBus">
@@ -35,6 +38,9 @@
 		</relationship>
 	</object>
 	<object class="MasterTrack" id="{41905415-eece-4600-87f6-6970d4f71572}">
+		<relationship name="modules">
+			<destination>{ad4c62fa-d3ba-48a6-b06c-0860d65c6b77}</destination>
+		</relationship>
 		<relationship name="mixerGroup">
 			<destination>{4ffef351-2337-480e-bed6-f16da41f4830}</destination>
 		</relationship>
@@ -53,9 +59,9 @@
 	<object class="EventAutomatableProperties" id="{afced5d6-babe-4b59-9d48-d14ca6f0f351}" />
 	<object class="MarkerTrack" id="{88dee50d-ef9b-4d1a-be7f-dbc6769d1ac7}" />
 	<object class="Timeline" id="{3215026f-2eaf-4cd4-b1f4-f277fc99cb51}">
-		<property name="isProxyEnabled">
-			<value>false</value>
-		</property>
+		<relationship name="modules">
+			<destination>{ad4c62fa-d3ba-48a6-b06c-0860d65c6b77}</destination>
+		</relationship>
 	</object>
 	<object class="EventMixerMaster" id="{4ffef351-2337-480e-bed6-f16da41f4830}">
 		<relationship name="effectChain">
@@ -66,6 +72,14 @@
 		</relationship>
 		<relationship name="mixer">
 			<destination>{12940b54-bae4-4110-821e-0666bea1290a}</destination>
+		</relationship>
+	</object>
+	<object class="SingleSound" id="{ad4c62fa-d3ba-48a6-b06c-0860d65c6b77}">
+		<property name="length">
+			<value>1.9347083333333333</value>
+		</property>
+		<relationship name="audioFile">
+			<destination>{2d7c6d64-60a2-4821-836f-f3be0b41218b}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusEffectChain" id="{954136cd-6590-4680-adb3-bcfbecb12ec5}">

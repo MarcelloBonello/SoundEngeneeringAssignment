@@ -5,7 +5,7 @@
 			<value>EnemyAgro</value>
 		</property>
 		<property name="outputFormat">
-			<value>0</value>
+			<value>1</value>
 		</property>
 		<relationship name="folder">
 			<destination>{1b3c2c1e-4f44-4084-bf80-a6be09700ebe}</destination>
@@ -28,6 +28,9 @@
 		<relationship name="timeline">
 			<destination>{11a55e20-c9f6-4574-99db-2fb4e076ae97}</destination>
 		</relationship>
+		<relationship name="banks">
+			<destination>{ee128638-d78e-4d10-8be5-df09e275f94c}</destination>
+		</relationship>
 	</object>
 	<object class="EventMixer" id="{5b19300f-6503-40e8-8b49-4315070000c6}">
 		<relationship name="masterBus">
@@ -35,6 +38,9 @@
 		</relationship>
 	</object>
 	<object class="MasterTrack" id="{416f8837-d839-4a74-98a6-ef1d6296e888}">
+		<relationship name="modules">
+			<destination>{e0d6cb0d-d94c-44c2-b35f-75da42a84663}</destination>
+		</relationship>
 		<relationship name="mixerGroup">
 			<destination>{321aec79-8e73-452b-87f2-14c38a8f7bfc}</destination>
 		</relationship>
@@ -53,9 +59,9 @@
 	<object class="EventAutomatableProperties" id="{746367d4-134a-4f44-b940-0ffea929f45d}" />
 	<object class="MarkerTrack" id="{7cf74f06-829a-4b1a-85ab-36d00d01c196}" />
 	<object class="Timeline" id="{11a55e20-c9f6-4574-99db-2fb4e076ae97}">
-		<property name="isProxyEnabled">
-			<value>false</value>
-		</property>
+		<relationship name="modules">
+			<destination>{e0d6cb0d-d94c-44c2-b35f-75da42a84663}</destination>
+		</relationship>
 	</object>
 	<object class="EventMixerMaster" id="{321aec79-8e73-452b-87f2-14c38a8f7bfc}">
 		<relationship name="effectChain">
@@ -66,6 +72,14 @@
 		</relationship>
 		<relationship name="mixer">
 			<destination>{5b19300f-6503-40e8-8b49-4315070000c6}</destination>
+		</relationship>
+	</object>
+	<object class="SingleSound" id="{e0d6cb0d-d94c-44c2-b35f-75da42a84663}">
+		<property name="length">
+			<value>1.9347083333333333</value>
+		</property>
+		<relationship name="audioFile">
+			<destination>{8c46fd77-8c1b-4ffe-8921-712c3f33844d}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusEffectChain" id="{c53a6984-f403-408a-b7d5-87efc25a9e9c}">
